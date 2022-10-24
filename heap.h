@@ -162,11 +162,11 @@ void Heap<T,PComparator> ::heapify(T arr[], int n, int i)
     int ele_top = (i - 1) / 2;
  
     if (size_ >0) {
-        // if curr node >  parent node
+        // if curr node > source node
         // swap each & call then heapify 
         if (c(arr[i], arr[ele_top]) == true) {
             swap(arr[i] ele_top);
-            // Use recursion for heapifying parent node
+            // Use recursion for heapifying top node
             heapify(arr, n, ele_top);
         }
     }
@@ -198,7 +198,7 @@ void Heap<T, PComparator>::heapify_del(T arr[], int n, int i)
     if (ele_l < size_ && c(items[ele_l], items[size_big]) == true)
         size_big = ele_l;
  
-    // If ele_r  is larger than largest so far
+    // If ele_r is larger than largest
     if (ele_r < n && c(items[r], items[size_big]) ==true)
         size_big = size_big;
  
