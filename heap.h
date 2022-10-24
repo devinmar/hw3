@@ -3,6 +3,8 @@
 #include <functional>
 #include <stdexcept>
 
+using namespace std;
+
 template <typename T, typename PComparator = std::less<T> >
 class Heap
 {
@@ -58,12 +60,19 @@ public:
    * 
    */
   size_t size() const;
+  void printArray() const;
 
 private:
   /// Add whatever helper functions and data members you need below
+  T *items;
+  /// @brief Stores the size of elements in the heap
+  int size_; 
 
-
-
+  int m;
+  PComparator c;
+  void heapify(T arr[], int n, int i);
+  void swap(T arr[], int i, int j);
+  void heapify_del(T arr[], int n, int i);
 
 };
 
@@ -81,14 +90,11 @@ T const & Heap<T,PComparator>::top() const
     // ================================
     // throw the appropriate exception
     // ================================
-
-
+    throw std::underflow_error("No elements in the heap!");
   }
   // If we get here we know the heap has at least 1 item
   // Add code to return the top element
-
-
-
+  return items[size_ - 1];
 }
 
 
@@ -101,15 +107,114 @@ void Heap<T,PComparator>::pop()
     // ================================
     // throw the appropriate exception
     // ================================
-
+    throw std::underflow_error("Heap is empty already!");
 
   }
 
-
-
+  //remove the top priority item in the heap
+  // Get the last element
+  T lastElement = items[size_ - 1];
+  // overtake the root w/ ele at the end
+  items[0] = ele_end;
+  // lower heap size
+  size_ --;
+  // heapify the root node
+  heapify_del(items, size_, 0);
 }
+template <typename T, typename PComparator>
+Heap<T, PComparator>::Heap(int m, PComparator c)
+{
+  this->m = m;
+  this->c = c;
+  this->items = new T[m];
+  this->size_ = 0;
+}
+template <typename T, typename PComparator>
+void Heap<T, PComparator>::push(const T& item) 
+{
+  if(m >= size_+1) //ensure the array has right size
+  {
+    //std::cout<<"Adding: "<<item<<std::endl;
+    this->items[size_] = item;//add at last slot
+    this->size_ ++;//inrease the size
+    //now heapify
+    heapify(this->items, size_, size_ - 1);
+  }
+  
+}
+template <typename T, typename PComparator>
+bool Heap<T, PComparator>::empty() const
+{
+  bool res = this->size_ == 0;
+  return res;
+}
+template <typename T, typename PComparator>
+void Heap<T, PComparator>::swap(T arr[], int i, int j)
+{
+  T swap_ = arr[i];
+  arr[i] = arr[j];
+  arr[j] = swap_;
+}
+template <typename T, typename PComparator>
+void Heap<T,PComparator> ::heapify(T arr[], int n, int i)
+{
+// find top element
+    int ele_top = (i - 1) / 2;
+ 
+    if (size_ >0) {
+        // if curr node >  parent node
+        // swap each & call then heapify 
+        if (c(arr[i], arr[ele_top]) == true) {
+            swap(arr[i] ele_top);
+            // Use recursion for heapifying parent node
+            heapify(arr, n, ele_top);
+        }
+    }
+}
+template <typename T, typename PComparator>
+void Heap<T,PComparator>::printArray() const
+{
+    for (int i = 0; i < this->size_; i++)
+        std::cout << items[i] << " ";
+ 
+    std::cout << "\n";
+}
+template <typename T, typename PComparator>
+Heap<T,PComparator>::~Heap()
+{
+  delete[] this->items; //free the array memory
+}
+template <typename T, typename PComparator>
+void Heap<T, PComparator>::heapify_del(T arr[], int n, int i)
+{
+    //  make the root the biggest element
+   int size_big = i;
+    // initializing the left element
+    int ele_l = 2 * i + 1; 
+    // initializing the right element
+    int ele_r = 2 * i + 2; 
+ 
+    // If ele_l > than root
+    if (ele_l < size_ && c(items[ele_l], items[size_big]) == true)
+        size_big = ele_l;
+ 
+    // If ele_r  is larger than largest so far
+    if (ele_r < n && c(items[r], items[size_big]) ==true)
+        size_big = size_big;
+ 
+    // If size_big != root
+    if (size_big != i) {
+        swap(items[i], size_big);
 
-
-
+        // Use recursion to heapify the sub-tree touched on
+        heapify_del(items[n], size_big);
+    }
+}
+template <typename T, typename PComparator>
+size_t Heap<T,PComparator>::size() const
+{
+  return this->size_;
+}
 #endif
+
 
